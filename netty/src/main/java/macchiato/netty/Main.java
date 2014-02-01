@@ -75,7 +75,7 @@ public final class Main {
 
 	}
 
-	static class HttpServer {
+	static class HttpServer implements AutoCloseable {
 
 		private final String host;
 		private final int port;
@@ -117,20 +117,27 @@ public final class Main {
 
 				server.bind(host, port);
 			} catch (final Exception e) {
-				shutdown();
+				close();
 				throw e;
 			}
 		}
 
-		public void shutdown() {
+		@Override
+		public void close() {
 			if (!isStarted()) {
 				return;
 			}
 
-			mainGroup.shutdownGracefully();
-			mainGroup = null;
-			workerGroup.shutdownGracefully();
-			workerGroup = null;
+			try {
+				mainGroup.shutdownGracefully();
+			} finally {
+				mainGroup = null;
+			}
+			try {
+				workerGroup.shutdownGracefully();
+			} finally {
+				workerGroup = null;
+			}
 		}
 
 	}
@@ -146,7 +153,7 @@ public final class Main {
 			@Override
 			public void run() {
 				System.out.println("Macchiato Netty shutdown...");
-				server.shutdown();
+				server.close();
 			}
 
 		});
