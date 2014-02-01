@@ -6,6 +6,10 @@ version = '1.0'
 
 configurations {
 	provided
+
+	compile.exclude group: 'com.sun.jdmk'
+	compile.exclude group: 'com.sun.jmx'
+	compile.exclude group: 'javax.jms'
 }
 
 sourceSets {
@@ -23,17 +27,13 @@ eclipse {
 
 repositories {
 	mavenCentral()
-	maven {
-		url 'https://repository.apache.org/content/repositories/releases'
-	}
+//	maven {
+//		url 'https://repository.apache.org/content/repositories/releases'
+//	}
 }
 
 dependencies {
-	compile('org.apache.kafka:kafka_2.8.0:0.8.0-beta1') {
-		exclude group: 'com.sun.jdmk'
-		exclude group: 'com.sun.jmx'
-		exclude group: 'javax.jms'
-	}
+	compile 'org.apache.kafka:kafka_2.10:0.8.0'
 }
 
 test {
