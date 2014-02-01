@@ -1,11 +1,12 @@
 Macchiato Kafka Sample
-======================
+----------------------
 
 http://kafka.apache.org/
 
+*Apache Kafka is publish-subscribe messaging rethought as a distributed commit log.*
 
-Building Kafka
---------------
+
+**Building Kafka**
 
 Building Kafka 0.8 with Scala 2.10.3.
 
@@ -52,8 +53,7 @@ Building Kafka 0.8 with Scala 2.10.3.
 
 ...
 
-Kafka Setup
------------
+**Kafka Setup**
 
 From [http://kafka.apache.org/documentation.html#quickstart](http://kafka.apache.org/documentation.html#quickstart) (skip `Step 1`)
 
