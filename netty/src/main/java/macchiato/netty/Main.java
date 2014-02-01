@@ -10,7 +10,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -32,10 +31,6 @@ public final class Main {
 
 	private Main() {
 	}
-
-	static final String host = "127.0.0.1";
-
-	static final int port = 8080;
 
 	static class HttpHandler extends ChannelInboundHandlerAdapter {
 
@@ -80,39 +75,78 @@ public final class Main {
 
 	}
 
+	static class HttpServer {
+
+		private final String host;
+		private final int port;
+
+		private EventLoopGroup mainGroup;
+		private EventLoopGroup workerGroup;
+
+		public HttpServer(final String host, final int port) {
+			this.host = host;
+			this.port = port;
+		}
+
+		public boolean isStarted() {
+			return mainGroup != null;
+		}
+
+		public void start() {
+			if (isStarted()) {
+				return;
+			}
+
+			mainGroup = new NioEventLoopGroup();
+			workerGroup = new NioEventLoopGroup();
+			try {
+				final ServerBootstrap server = new ServerBootstrap();
+//				server.option(ChannelOption.SO_BACKLOG, 1024);
+				server.group(mainGroup, workerGroup);
+				server.channel(NioServerSocketChannel.class);
+				server.childHandler(new ChannelInitializer<SocketChannel>() {
+
+					@Override
+					public void initChannel(final SocketChannel ch) throws Exception {
+						final ChannelPipeline pipe = ch.pipeline();
+						pipe.addLast(new HttpServerCodec());
+						pipe.addLast(new HttpHandler());
+					}
+
+				});
+
+				server.bind(host, port);
+			} catch (final Exception e) {
+				shutdown();
+				throw e;
+			}
+		}
+
+		public void shutdown() {
+			if (!isStarted()) {
+				return;
+			}
+
+			mainGroup.shutdownGracefully();
+			mainGroup = null;
+			workerGroup.shutdownGracefully();
+			workerGroup = null;
+		}
+
+	}
+
 	public static void main(final String... args) throws Exception {
 		System.out.println("Macchiato Netty start...");
 
-		final EventLoopGroup mainGroup = new NioEventLoopGroup();
-		final EventLoopGroup workerGroup = new NioEventLoopGroup();
-		try {
-			final ServerBootstrap server = new ServerBootstrap();
-//			server.option(ChannelOption.SO_BACKLOG, 1024);
-			server.group(mainGroup, workerGroup);
-			server.channel(NioServerSocketChannel.class);
-			server.childHandler(new ChannelInitializer<SocketChannel>() {
-
-				@Override
-				public void initChannel(final SocketChannel ch) throws Exception {
-					final ChannelPipeline pipe = ch.pipeline();
-					pipe.addLast(new HttpServerCodec());
-					pipe.addLast(new HttpHandler());
-				}
-
-			});
-
-			final Channel bind = server.bind(host, port).sync().channel();
-			bind.closeFuture().sync();
-		} finally {
-			mainGroup.shutdownGracefully();
-			workerGroup.shutdownGracefully();
-		}
+		final HttpServer server = new HttpServer("127.0.0.1", 8080);
+		server.start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 
 			@Override
 			public void run() {
 				System.out.println("Macchiato Netty shutdown...");
+				server.shutdown();
 			}
 
 		});
