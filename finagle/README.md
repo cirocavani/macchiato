@@ -5,8 +5,11 @@ http://twitter.github.io/finagle/
 
 *Results*
 
+    (first, start Redis and set 'foo'='bar')
+    
     sbt/sbt run
 
+...
 
     curl -D - http://127.0.0.1:8080/foo
     
@@ -15,7 +18,7 @@ http://twitter.github.io/finagle/
     Content-Length: 3
     
     bar
-
+...
 
     wrk -t 10 -c 200 -d 30s --latency http://127.0.0.1:8080/foo
     
@@ -33,3 +36,4 @@ http://twitter.github.io/finagle/
     Requests/sec:  32154.28
     Transfer/sec:      2.05MB
 
+...
