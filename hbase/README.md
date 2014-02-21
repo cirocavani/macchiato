@@ -9,12 +9,12 @@ http://hbase.apache.org/
 
 From [http://hbase.apache.org/book.html#quickstart](http://hbase.apache.org/book.html#quickstart)
 
-1. Download package `hbase-0.96.1.1-hadoop2-bin.tar.gz` from:
+1. Download package `hbase-0.98.0-hadoop2-bin.tar.gz` from:
 
     [http://www.apache.org/dyn/closer.cgi/hbase/](http://www.apache.org/dyn/closer.cgi/hbase/)
     
-        tar zxf hbase-0.96.1.1-hadoop2-bin.tar.gz
-        cd hbase-0.96.1.1-hadoop2
+        tar zxf hbase-0.98.0-hadoop2-bin.tar.gz
+        cd hbase-0.98.0-hadoop2
 
 2. Setup HBase and ZooKeeper directories:
 
@@ -52,7 +52,6 @@ From [http://hbase.apache.org/book.html#quickstart](http://hbase.apache.org/book
     (Verification)
         
         netstat -nplt | grep java
-        ... 0.0.0.0:60030 ...
         ... 0.0.0.0:2181 ...
         ... 0.0.0.0:60010 ...
         ...
