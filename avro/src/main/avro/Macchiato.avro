@@ -1,0 +1,12 @@
+{
+	"namespace": "macchiato.avro",
+	"type": "record",
+	"name": "Particle",
+	"fields": [
+		{"name": "principal", "type": "string"},
+		{"name": "operation", "type": "string"},
+		{"name": "source", "type": "string"},
+		{"name": "timestamp", "type": "long"},
+		{"name": "attributes", "type": {"type": "map", "values": "string"}}
+	]
+}

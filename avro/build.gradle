@@ -6,6 +6,7 @@ version = '1.0'
 
 configurations {
 	provided
+	tool
 }
 
 sourceSets {
@@ -26,12 +27,20 @@ repositories {
 }
 
 dependencies {
-	compile 'org.apache.avro:avro:1.7.5'
+	compile 'org.apache.avro:avro:1.7.6'
+	tool 'org.apache.avro:avro-tools:1.7.6'
 }
 
 test {
 	testLogging {
 		events "started", "passed", "skipped", "failed", "standardOut", "standardError"
 		exceptionFormat "full"
+	}
+}
+
+task avro << {
+	ant.taskdef(name: 'avro', classname: 'org.apache.avro.compiler.specific.SchemaTask', classpath: configurations.tool.asPath)
+	ant.avro(destdir: 'src/main/java') {
+		fileset(dir: 'src/main/avro', includes: '*.avro')
 	}
 }
