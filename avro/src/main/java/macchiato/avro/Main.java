@@ -73,6 +73,7 @@ public final class Main {
 			Particle p = in.next();
 			System.out.println(p);
 		}
+		in.close();
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 
