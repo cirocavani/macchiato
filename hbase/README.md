@@ -35,7 +35,7 @@ From [http://hbase.apache.org/book.html#quickstart](http://hbase.apache.org/book
 
     nano -w conf/hbase-env.sh
 
-        export JAVA_HOME=/home/cavani/Software/jdk1.7.0_51/
+        export JAVA_HOME=/home/cavani/Software/jdk1.8.0_05/
         ...
         export HBASE_OPTS="-XX:+UseConcMarkSweepGC -Djava.net.preferIPv4Stack=true"
         ...
@@ -57,4 +57,11 @@ From [http://hbase.apache.org/book.html#quickstart](http://hbase.apache.org/book
         ...
         tail -f logs/hbase-cavani-master-cavani-workstation.log
         ...
-    
+
+     (Web UI)
+     
+        (master)
+        http://127.0.0.1:60010/master-status
+        
+        (region server)
+        http://127.0.0.1:56225/rs-status
