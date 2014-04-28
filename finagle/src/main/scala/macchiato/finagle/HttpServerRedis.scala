@@ -33,12 +33,12 @@ object HttpServerRedis extends App {
 
   val redisService = new Service[Request, Response] {
     def ok(raw: ChannelBuffer): Future[Response] = {
-      val response = Response.apply(HttpResponseStatus.OK)
+      val response = Response(HttpResponseStatus.OK)
       response.setContent(raw)
       Future.value(response)
     }
     def error(): Future[Response] = {
-      Future.value(Response.apply(HttpResponseStatus.NOT_FOUND))
+      Future.value(Response(HttpResponseStatus.NOT_FOUND))
     }
     def convert(raw: Option[ChannelBuffer]): Future[Response] = {
       raw match {

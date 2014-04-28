@@ -23,7 +23,7 @@ object HttpServerRoute extends App {
 
   val healthcheck = new Service[Request, Response] {
     def apply(req: Request): Future[Response] = {
-      val response = Response.apply(HttpResponseStatus.OK)
+      val response = Response(HttpResponseStatus.OK)
       response.setContent(ChannelBuffers.copiedBuffer("WORKING", CharsetUtil.UTF_8))
       Future.value(response)
     }
@@ -34,7 +34,7 @@ object HttpServerRoute extends App {
   val rand = new Service[Request, Response] {
     def apply(req: Request): Future[Response] = {
       val value = s"${rnd.nextLong()}";
-      val response = Response.apply(HttpResponseStatus.OK)
+      val response = Response(HttpResponseStatus.OK)
       response.setContent(ChannelBuffers.copiedBuffer(value, CharsetUtil.UTF_8))
       Future.value(response)
     }
