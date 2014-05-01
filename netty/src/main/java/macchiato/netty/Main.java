@@ -5,24 +5,28 @@ import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaders.Values.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders.Values;
-import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 
 import java.io.IOException;
@@ -32,47 +36,38 @@ public final class Main {
 	private Main() {
 	}
 
-	static class HttpHandler extends ChannelInboundHandlerAdapter {
+	static class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-		private static final byte[] CONTENT = { 'W', 'o', 'r', 'k', 'i', 'n', 'g' };
-
-		@Override
-		public void channelReadComplete(final ChannelHandlerContext ctx) {
-			ctx.flush();
-		}
+		private static final ByteBuf RESPONSE_BUFFER = Unpooled.wrappedBuffer(new byte[] { 'W', 'o', 'r', 'k', 'i', 'n', 'g' });
+		private static final ByteBuf RESPONSE = Unpooled.unreleasableBuffer(RESPONSE_BUFFER);
 
 		@Override
-		public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-			if (msg instanceof HttpRequest) {
-				final HttpRequest req = (HttpRequest) msg;
+		protected void channelRead0(final ChannelHandlerContext ctx, final FullHttpRequest req) throws Exception {
+			if (is100ContinueExpected(req)) {
+				ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
+			}
 
-				if (is100ContinueExpected(req)) {
-					ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
-				}
-				final boolean keepAlive = isKeepAlive(req);
-				final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(CONTENT));
-				response.headers().set(CONTENT_TYPE, "text/plain");
-				response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
+			final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, RESPONSE);
+			response.headers().set(CONTENT_TYPE, "text/plain");
+			response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
 
-				if (!keepAlive) {
-					ctx.write(response).addListener(ChannelFutureListener.CLOSE);
-				} else {
-					response.headers().set(CONNECTION, Values.KEEP_ALIVE);
-					ctx.write(response);
-				}
+			if (isKeepAlive(req)) {
+				response.headers().set(CONNECTION, KEEP_ALIVE);
+				ctx.writeAndFlush(response);
+			} else {
+				ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 			}
 		}
 
 		@Override
 		public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
-			if (IOException.class == cause.getClass() && "Connection reset by peer".equals(cause.getMessage())) {
+			if (cause.getClass() == IOException.class && cause.getMessage().endsWith("Connection reset by peer")) {
 				// ignore
 			} else {
 				cause.printStackTrace();
 			}
 			ctx.close();
 		}
-
 	}
 
 	static class HttpServer implements AutoCloseable {
@@ -97,19 +92,22 @@ public final class Main {
 				return;
 			}
 
-			mainGroup = new NioEventLoopGroup();
-			workerGroup = new NioEventLoopGroup();
+			mainGroup = new EpollEventLoopGroup(1);
+			workerGroup = new EpollEventLoopGroup(Runtime.getRuntime().availableProcessors());
 			try {
 				final ServerBootstrap server = new ServerBootstrap();
-//				server.option(ChannelOption.SO_BACKLOG, 1024);
+				server.option(ChannelOption.SO_BACKLOG, 1024);
+				server.option(ChannelOption.TCP_NODELAY, true);
+				server.option(EpollChannelOption.TCP_CORK, true);
 				server.group(mainGroup, workerGroup);
-				server.channel(NioServerSocketChannel.class);
+				server.channel(EpollServerSocketChannel.class);
 				server.childHandler(new ChannelInitializer<SocketChannel>() {
 
 					@Override
 					public void initChannel(final SocketChannel ch) throws Exception {
 						final ChannelPipeline pipe = ch.pipeline();
 						pipe.addLast(new HttpServerCodec());
+						pipe.addLast(new HttpObjectAggregator(1048576));
 						pipe.addLast(new HttpHandler());
 					}
 
@@ -144,6 +142,8 @@ public final class Main {
 
 	public static void main(final String... args) throws Exception {
 		System.out.println("Macchiato Netty start...");
+
+//		ResourceLeakDetector.setLevel(Level.ADVANCED);
 
 		final HttpServer server = new HttpServer("127.0.0.1", 8080);
 		server.start();
