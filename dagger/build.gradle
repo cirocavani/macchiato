@@ -8,7 +8,7 @@ version = '1.0'
 
 configurations {
 	provided
-	tools
+	apt
 }
 
 sourceSets {
@@ -44,7 +44,7 @@ org.eclipse.jdt.apt.reconcileEnabled=true
 	def out = new StringWriter()
 	def xml = new groovy.xml.MarkupBuilder(out)
 	xml.factorypath {
-		for (i in configurations.tools) {
+		for (i in configurations.apt) {
 			factorypathentry(kind: 'EXTJAR', id: i.toString(), enabled:'true', runInBatchMode: 'false')
 		}
 	}
@@ -64,7 +64,7 @@ repositories {
 
 dependencies {
 	compile 'com.squareup.dagger:dagger:1.2.1'
-	tools 'com.squareup.dagger:dagger-compiler:1.2.1'
+	apt 'com.squareup.dagger:dagger-compiler:1.2.1'
 }
 
 test {
