@@ -1,5 +1,3 @@
-import java.beans.XMLDecoder;
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
