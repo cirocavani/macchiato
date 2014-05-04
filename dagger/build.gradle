@@ -1,12 +1,13 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'application'
 
 sourceCompatibility = 1.7
 version = '1.0'
 
 configurations {
-	provided
 	apt
+	provided
 }
 
 sourceSets {
@@ -71,3 +72,12 @@ test {
 		exceptionFormat "full"
 	}
 }
+
+tasks.withType(JavaCompile).each { task ->
+	task.options.compilerArgs += [
+		'-processorpath',
+		configurations.apt.asPath
+	]
+}
+
+mainClassName = 'macchiato.dagger.Main'
