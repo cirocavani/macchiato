@@ -4,3 +4,5 @@ bin
 build
 .classpath
 .project
+.apt_generated
+.factorypath

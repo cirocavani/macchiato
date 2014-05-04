@@ -1,3 +1,5 @@
+import java.beans.XMLDecoder;
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
@@ -19,7 +21,41 @@ sourceSets {
 
 eclipse {
 	classpath { plusConfigurations += configurations.provided }
+	jdt {
+		file {
+			withProperties { properties ->
+				properties['org.eclipse.jdt.core.compiler.processAnnotations'] = 'enabled'
+			}
+		}
+	}
 }
+
+task eclipseApt << {
+	def dir = file('.settings')
+	if (!dir.exists())
+		dir.mkdir()
+	file('.settings/org.eclipse.jdt.apt.core.prefs').write('''# Gradle Build
+eclipse.preferences.version=1
+org.eclipse.jdt.apt.aptEnabled=true
+org.eclipse.jdt.apt.genSrcDir=.apt_generated
+org.eclipse.jdt.apt.reconcileEnabled=true
+''')
+	def out = new StringWriter()
+	def xml = new groovy.xml.MarkupBuilder(out)
+	xml.factorypath {
+		for (i in configurations.compile) {
+			factorypathentry(kind: 'EXTJAR', id: i.toString(), enabled:'true', runInBatchMode: 'false')
+		}
+	}
+	file('.factorypath').write(out.toString())
+}
+task cleanEclipseApt << {
+	file('.settings/org.eclipse.jdt.apt.core.prefs').delete()
+	file('.factorypath').delete()
+}
+
+eclipseJdt.dependsOn eclipseApt
+cleanEclipseJdt.dependsOn cleanEclipseApt
 
 repositories {
 	mavenCentral()
@@ -27,6 +63,7 @@ repositories {
 
 dependencies {
 	compile 'com.squareup.dagger:dagger:1.2.1'
+	compile 'com.squareup.dagger:dagger-compiler:1.2.1'
 }
 
 test {
