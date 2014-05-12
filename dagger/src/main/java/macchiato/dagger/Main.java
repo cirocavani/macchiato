@@ -1,6 +1,13 @@
 package macchiato.dagger;
 
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.util.Properties;
+
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -12,20 +19,20 @@ public final class Main {
 	private Main() {
 	}
 
-	static class Config {
-
-		void dump() {
-			System.out.println("x=y");
-		}
+	@Qualifier
+	@Documented
+	@Retention(RUNTIME)
+	static @interface Config {
 	}
 
 	static class App {
 
 		@Inject
-		Config config;
+		@Config
+		Properties config;
 
 		public void start() {
-			config.dump();
+			System.out.println(config);
 		}
 
 	}
@@ -35,8 +42,12 @@ public final class Main {
 
 		@Provides
 		@Singleton
-		Config provideConfig() {
-			return new Config();
+		@Config
+		Properties provideConfig() {
+			final Properties config = new Properties();
+			config.setProperty("x", "1");
+			config.setProperty("y", "2");
+			return config;
 		}
 
 	}
