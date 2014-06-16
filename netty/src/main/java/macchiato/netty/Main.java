@@ -38,8 +38,8 @@ public final class Main {
 
 	static class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-		private static final ByteBuf RESPONSE_BUFFER = Unpooled.wrappedBuffer(new byte[] { 'W', 'o', 'r', 'k', 'i', 'n', 'g' });
-		private static final ByteBuf RESPONSE = Unpooled.unreleasableBuffer(RESPONSE_BUFFER);
+		private static final ByteBuf RESPONSE_RAW = Unpooled.wrappedBuffer(new byte[] { 'W', 'O', 'R', 'K', 'I', 'N', 'G' });
+		private static final ByteBuf RESPONSE = Unpooled.unreleasableBuffer(RESPONSE_RAW);
 
 		@Override
 		protected void channelRead0(final ChannelHandlerContext ctx, final FullHttpRequest req) throws Exception {
@@ -48,7 +48,7 @@ public final class Main {
 			}
 
 			final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, RESPONSE);
-			response.headers().set(CONTENT_TYPE, "text/plain");
+			response.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
 			response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
 
 			if (isKeepAlive(req)) {

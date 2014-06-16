@@ -9,18 +9,22 @@ http://hbase.apache.org/
 
 From [http://hbase.apache.org/book.html#quickstart](http://hbase.apache.org/book.html#quickstart)
 
-1. Download package `hbase-0.98.1-hadoop2-bin.tar.gz` from:
+1. Download package `hbase-0.98.3-hadoop2-bin.tar.gz` from:
 
     [http://www.apache.org/dyn/closer.cgi/hbase/](http://www.apache.org/dyn/closer.cgi/hbase/)
     
-        tar zxf hbase-0.98.1-hadoop2-bin.tar.gz
-        cd hbase-0.98.1-hadoop2
+        tar zxf hbase-0.98.3-hadoop2-bin.tar.gz
+        cd hbase-0.98.3-hadoop2
 
 2. Setup HBase and ZooKeeper directories:
 
     nano -w conf/hbase-site.xml
     
         <configuration>
+          <property>
+            <name>hbase.tmp.dir</name>
+            <value>file:///home/cavani/Service/hbase/tmp</value>
+          </property>
           <property>
             <name>hbase.rootdir</name>
             <value>file:///home/cavani/Service/hbase/data</value>
