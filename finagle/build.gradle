@@ -1,0 +1,38 @@
+apply plugin: 'scala'
+apply plugin: 'eclipse'
+
+version = '1.0'
+
+configurations {
+	provided
+}
+
+sourceSets {
+	main {
+		compileClasspath += [configurations.provided]
+	}
+	test {
+		compileClasspath += [configurations.provided]
+	}
+}
+
+eclipse {
+	classpath { plusConfigurations += [configurations.provided] }
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile 'org.scala-lang:scala-library:2.10.4'
+	compile 'com.twitter:finagle-http_2.10:6.18.0'
+	compile 'com.twitter:finagle-redis_2.10:6.18.0'
+}
+
+test {
+	testLogging {
+		events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+		exceptionFormat "full"
+	}
+}
