@@ -26,8 +26,8 @@ repositories {
 }
 
 dependencies {
-	compile 'org.apache.avro:avro:1.7.6'
-	tool 'org.apache.avro:avro-tools:1.7.6'
+	compile 'org.apache.avro:avro:1.7.7'
+	tool 'org.apache.avro:avro-tools:1.7.7'
 }
 
 test {

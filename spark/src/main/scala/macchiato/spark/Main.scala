@@ -5,7 +5,7 @@ import org.apache.spark.SparkContext
 
 object Main {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     println("Macchiato Spark start...")
 
     val file = "README.md"
