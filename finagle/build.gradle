@@ -24,8 +24,8 @@ repositories {
 
 dependencies {
 	compile 'org.scala-lang:scala-library:2.10.4'
-	compile 'com.twitter:finagle-http_2.10:6.20.0'
-	compile 'com.twitter:finagle-redis_2.10:6.20.0'
+	compile 'com.twitter:finagle-http_2.10:6.24.0'
+	compile 'com.twitter:finagle-redis_2.10:6.24.0'
 }
 
 test {
