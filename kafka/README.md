@@ -8,12 +8,12 @@ http://kafka.apache.org/
 
 **Kafka Setup**
 
-1. Download package `kafka_2.10-0.8.1.1.tgz` from:
+1. Download package `kafka_2.11-0.8.2-beta.tgz` from:
 
     [http://kafka.apache.org/downloads.html](http://kafka.apache.org/downloads.html)
     
-        tar zxf kafka_2.10-0.8.1.1.tgz
-        cd kafka_2.10-0.8.1.1
+        tar zxf kafka_2.11-0.8.2-beta.tgz
+        cd kafka_2.11-0.8.2-beta
 
 2. Setup Kafka and ZooKeeper directories:
 
