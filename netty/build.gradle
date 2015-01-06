@@ -25,9 +25,9 @@ repositories {
 }
 
 dependencies {
-	compile 'io.netty:netty-codec-http:4.0.24.Final'
-//	compile 'io.netty:netty-transport-native-epoll:4.0.24.Final'
-	compile 'io.netty:netty-transport-native-epoll:4.0.24.Final:linux-x86_64'
+	compile 'io.netty:netty-codec-http:4.0.25.Final'
+//	compile 'io.netty:netty-transport-native-epoll:4.0.25.Final'
+	compile 'io.netty:netty-transport-native-epoll:4.0.25.Final:linux-x86_64'
 }
 
 test {
