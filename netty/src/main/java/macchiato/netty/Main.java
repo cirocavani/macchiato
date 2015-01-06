@@ -10,7 +10,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -38,8 +37,7 @@ public final class Main {
 
 	static class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-		private static final ByteBuf RESPONSE_RAW = Unpooled.wrappedBuffer(new byte[] { 'W', 'O', 'R', 'K', 'I', 'N', 'G' });
-		private static final ByteBuf RESPONSE = Unpooled.unreleasableBuffer(RESPONSE_RAW);
+		private static final byte[] RESPONSE_RAW = new byte[] { 'W', 'O', 'R', 'K', 'I', 'N', 'G' };
 
 		@Override
 		protected void channelRead0(final ChannelHandlerContext ctx, final FullHttpRequest req) throws Exception {
@@ -47,7 +45,7 @@ public final class Main {
 				ctx.write(new DefaultFullHttpResponse(HTTP_1_1, CONTINUE));
 			}
 
-			final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, RESPONSE);
+			final FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(RESPONSE_RAW));
 			response.headers().set(CONTENT_TYPE, "text/plain; charset=utf-8");
 			response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
 
