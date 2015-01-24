@@ -63,7 +63,7 @@ public final class Main {
 
 			@Override
 			public void run() {
-				System.out.println("Macchiato Dagger shutdown...");
+				System.out.println("Macchiato Dagger shutdown.");
 			}
 
 		});

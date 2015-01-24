@@ -53,7 +53,7 @@ object HttpServerRoute extends App {
     .build(service)
 
   sys.ShutdownHookThread {
-    println("Macchiato Finagle HTTP Server Route shutdown...")
+    println("Macchiato Finagle HTTP Server Route shutdown.")
   }
 
 }

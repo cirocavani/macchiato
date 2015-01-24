@@ -150,7 +150,7 @@ public final class Main {
 
 			@Override
 			public void run() {
-				System.out.println("Macchiato Netty shutdown...");
+				System.out.println("Macchiato Netty shutdown.");
 				server.close();
 			}
 

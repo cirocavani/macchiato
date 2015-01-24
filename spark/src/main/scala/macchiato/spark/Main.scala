@@ -23,7 +23,7 @@ object Main {
     println("Lines with a: %s, Lines with b: %s".format(numAs, numBs))
 
     sys.ShutdownHookThread {
-      println("Macchiato Spark shutdown...")
+      println("Macchiato Spark shutdown.")
     }
   }
 

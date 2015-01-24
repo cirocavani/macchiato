@@ -64,7 +64,7 @@ object HttpServerRedis extends App {
     .build(service)
 
   sys.ShutdownHookThread {
-    println("Macchiato Finagle HTTP Server Redis shutdown...")
+    println("Macchiato Finagle HTTP Server Redis shutdown.")
   }
 
 }

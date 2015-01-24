@@ -104,7 +104,7 @@ public final class Main {
 
 			@Override
 			public void run() {
-				System.out.println("Macchiato HBase shutdown...");
+				System.out.println("Macchiato HBase shutdown.");
 			}
 
 		});

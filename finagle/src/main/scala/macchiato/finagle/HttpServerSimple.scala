@@ -41,7 +41,7 @@ object HttpServerSimple extends App {
   Await.ready(server)
 
   sys.ShutdownHookThread {
-    println("Macchiato Finagle HTTP Server shutdown...")
+    println("Macchiato Finagle HTTP Server shutdown.")
   }
 
 }

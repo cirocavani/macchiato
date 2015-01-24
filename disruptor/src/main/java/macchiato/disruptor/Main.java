@@ -336,7 +336,7 @@ public final class Main {
 				final double s = storeTime / 1000D;
 				final double m = tripTime / 1000D / k;
 				System.out.printf("Time: %,.3fs, proc: %,.3fs, store: %,.3fs, mean: %,.3fs\n", (System.currentTimeMillis() - t) / 1000D, p, s, m);
-				System.out.println("Macchiato Disruptor shutdown...");
+				System.out.println("Macchiato Disruptor shutdown.");
 			}
 
 		});
