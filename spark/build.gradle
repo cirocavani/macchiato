@@ -1,31 +1,11 @@
 apply plugin: 'scala'
 apply plugin: 'eclipse'
 
-configurations {
-	provided
-}
-
-sourceSets {
-	main { compileClasspath += [configurations.provided] }
-	test { compileClasspath += [configurations.provided] }
-}
-
-eclipse {
-	classpath { plusConfigurations += [configurations.provided] }
-}
-
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	compile 'org.scala-lang:scala-library:2.10.4'
-	compile 'org.apache.spark:spark-core_2.10:1.2.0'
-}
-
-test {
-	testLogging {
-		events "started", "passed", "skipped", "failed", "standardOut", "standardError"
-		exceptionFormat "full"
-	}
+	compile 'org.scala-lang:scala-library:2.10.5'
+	compile 'org.apache.spark:spark-core_2.10:1.4.0'
 }

@@ -4,17 +4,7 @@ apply plugin: 'eclipse'
 sourceCompatibility = 1.8
 
 configurations {
-	provided
 	tool
-}
-
-sourceSets {
-	main { compileClasspath += [configurations.provided] }
-	test { compileClasspath += [configurations.provided] }
-}
-
-eclipse {
-	classpath { plusConfigurations += [configurations.provided] }
 }
 
 repositories {
@@ -24,13 +14,6 @@ repositories {
 dependencies {
 	compile 'org.apache.avro:avro:1.7.7'
 	tool 'org.apache.avro:avro-tools:1.7.7'
-}
-
-test {
-	testLogging {
-		events "started", "passed", "skipped", "failed", "standardOut", "standardError"
-		exceptionFormat "full"
-	}
 }
 
 task avro << {

@@ -4,20 +4,9 @@ apply plugin: 'eclipse'
 sourceCompatibility = 1.8
 
 configurations {
-	provided
-
 	compile.exclude group: 'com.sun.jdmk'
 	compile.exclude group: 'com.sun.jmx'
 	compile.exclude group: 'javax.jms'
-}
-
-sourceSets {
-	main { compileClasspath += [configurations.provided] }
-	test { compileClasspath += [configurations.provided] }
-}
-
-eclipse {
-	classpath { plusConfigurations += [configurations.provided] }
 }
 
 repositories {
@@ -25,12 +14,5 @@ repositories {
 }
 
 dependencies {
-	compile 'org.apache.kafka:kafka_2.11:0.8.2-beta'
-}
-
-test {
-	testLogging {
-		events "started", "passed", "skipped", "failed", "standardOut", "standardError"
-		exceptionFormat "full"
-	}
+	compile 'org.apache.kafka:kafka_2.11:0.8.2.1'
 }

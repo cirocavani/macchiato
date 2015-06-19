@@ -3,32 +3,12 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = 1.8
 
-configurations {
-	provided
-}
-
-sourceSets {
-	main { compileClasspath += [configurations.provided] }
-	test { compileClasspath += [configurations.provided] }
-}
-
-eclipse {
-	classpath { plusConfigurations += [configurations.provided] }
-}
-
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	compile 'io.netty:netty-codec-http:4.0.25.Final'
-//	compile 'io.netty:netty-transport-native-epoll:4.0.25.Final'
-	compile 'io.netty:netty-transport-native-epoll:4.0.25.Final:linux-x86_64'
-}
-
-test {
-	testLogging {
-		events "started", "passed", "skipped", "failed", "standardOut", "standardError"
-		exceptionFormat "full"
-	}
+	compile 'io.netty:netty-codec-http:4.0.28.Final'
+//	compile 'io.netty:netty-transport-native-epoll:4.0.28.Final'
+	compile 'io.netty:netty-transport-native-epoll:4.0.28.Final:linux-x86_64'
 }
