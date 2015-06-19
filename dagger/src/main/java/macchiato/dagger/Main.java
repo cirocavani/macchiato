@@ -10,8 +10,8 @@ import javax.inject.Inject;
 import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
+import dagger.Component;
 import dagger.Module;
-import dagger.ObjectGraph;
 import dagger.Provides;
 
 public final class Main {
@@ -31,13 +31,17 @@ public final class Main {
 		@Config
 		Properties config;
 
+		@Inject
+		public App() {
+		}
+
 		public void start() {
 			System.out.println(config);
 		}
 
 	}
 
-	@Module(injects = App.class)
+	@Module
 	static class MainModule {
 
 		@Provides
@@ -52,11 +56,18 @@ public final class Main {
 
 	}
 
+	@Singleton
+	@Component(modules = MainModule.class)
+	public interface Factory {
+
+		App app();
+
+	}
+
 	public static void main(final String... args) throws Exception {
 		System.out.println("Macchiato Dagger start...");
 
-		final ObjectGraph objectGraph = ObjectGraph.create(new MainModule());
-		final App app = objectGraph.get(App.class);
+		final App app = DaggerMain_Factory.create().app();
 		app.start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
