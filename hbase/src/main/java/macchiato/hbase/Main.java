@@ -10,13 +10,15 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Admin;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public final class Main {
@@ -28,20 +30,22 @@ public final class Main {
 		System.out.println("Macchiato HBase start...");
 
 		final String zookeeper = "127.0.0.1:2181";
-		final String tablename = "test";
+		final TableName tablename = TableName.valueOf("test");
 		final byte[] family = Bytes.toBytes("m");
 
 		final Configuration config = HBaseConfiguration.create();
 		config.set("hbase.zookeeper.quorum", zookeeper);
 
-		final HBaseAdmin admin = new HBaseAdmin(config);
+		final Connection connection = ConnectionFactory.createConnection(config);
+
+		final Admin admin = connection.getAdmin();
 		if (admin.tableExists(tablename)) {
 			dropTable(admin, tablename);
 		}
 		createTable(admin, tablename, family);
 		admin.close();
 
-		final HTable table = new HTable(config, tablename);
+		final Table table = connection.getTable(tablename);
 
 		{
 			System.out.println("Storing data...");
@@ -53,7 +57,7 @@ public final class Main {
 
 			final Put op = new Put(rowkey);
 			for (final Map.Entry<byte[], byte[]> m : keyValues.entrySet()) {
-				op.add(family, m.getKey(), m.getValue());
+				op.addColumn(family, m.getKey(), m.getValue());
 			}
 			table.put(op);
 
@@ -110,7 +114,7 @@ public final class Main {
 		});
 	}
 
-	static void dropTable(final HBaseAdmin admin, final String name) throws IOException {
+	static void dropTable(final Admin admin, final TableName name) throws IOException {
 		System.out.println("Dropping table: " + name);
 		if (admin.isTableEnabled(name)) {
 			admin.disableTable(name);
@@ -119,10 +123,9 @@ public final class Main {
 		System.out.println("Drop done: " + name);
 	}
 
-	static void createTable(final HBaseAdmin admin, final String name, final byte[] family) throws IOException {
+	static void createTable(final Admin admin, final TableName name, final byte[] family) throws IOException {
 		System.out.println("Creating table: " + name);
-		final TableName _name = TableName.valueOf(name);
-		final HTableDescriptor table = new HTableDescriptor(_name);
+		final HTableDescriptor table = new HTableDescriptor(name);
 
 		final HColumnDescriptor m = new HColumnDescriptor(family);
 		m.setMaxVersions(1);
